@@ -35,8 +35,8 @@ public class AuthService {
       return AuthResponse.builder().status(HttpStatus.CONFLICT.value()).message(USER_ALREADY_EXISTS).build();
     }
 
-    String hashedPassword = passwordEncoder.encode(password);
-    userRepository.save(new User(email, hashedPassword));
+    String encodedPassword = passwordEncoder.encode(password);
+    userRepository.save(new User(email, encodedPassword));
 
     return AuthResponse.builder().status(HttpStatus.OK.value()).message(USER_REGISTERED).build();
   }
