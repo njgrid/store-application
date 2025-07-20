@@ -1,9 +1,9 @@
 package com.griddynamics.storeapplication.controller;
 
-import com.griddynamics.storeapplication.dto.request.AuthRequest;
 import com.griddynamics.storeapplication.dto.request.LoginRequest;
-import com.griddynamics.storeapplication.dto.response.AuthResponse;
+import com.griddynamics.storeapplication.dto.request.RegisterRequest;
 import com.griddynamics.storeapplication.dto.response.LoginResponse;
+import com.griddynamics.storeapplication.dto.response.RegisterResponse;
 import com.griddynamics.storeapplication.exception.UserNotFoundException;
 import com.griddynamics.storeapplication.service.AuthService;
 import com.griddynamics.storeapplication.util.CommonUtils;
@@ -28,8 +28,8 @@ public class AuthController {
   private AuthService authService;
 
   @PostMapping(API_REGISTER)
-  public AuthResponse register(@RequestBody final AuthRequest authRequest) {
-    return authService.register(authRequest);
+  public RegisterResponse register(@RequestBody final RegisterRequest registerRequest) {
+    return authService.register(registerRequest);
   }
 
   @PostMapping(API_LOGIN)

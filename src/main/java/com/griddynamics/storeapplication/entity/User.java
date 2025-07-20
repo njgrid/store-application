@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = User.TABLE_NAME)
+@Table(name = User.TABLE_USERS)
 public class User {
 
-  public static final String TABLE_NAME = "users";
+  public static final String TABLE_USERS = "users";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

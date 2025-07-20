@@ -1,8 +1,8 @@
 package com.griddynamics.storeapplication.service;
 
-import com.griddynamics.storeapplication.dto.request.AuthRequest;
 import com.griddynamics.storeapplication.dto.request.LoginRequest;
-import com.griddynamics.storeapplication.dto.response.AuthResponse;
+import com.griddynamics.storeapplication.dto.request.RegisterRequest;
+import com.griddynamics.storeapplication.dto.response.RegisterResponse;
 import com.griddynamics.storeapplication.entity.User;
 import com.griddynamics.storeapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +26,19 @@ public class AuthService {
   @Autowired
   private SessionManagerService sessionManagerService;
 
-  public AuthResponse register(@RequestBody final AuthRequest authRequest) {
-    final String email = authRequest.getEmail();
-    final String password = authRequest.getPassword();
+  public RegisterResponse register(@RequestBody final RegisterRequest registerRequest) {
+    final String email = registerRequest.getEmail();
+    final String password = registerRequest.getPassword();
 
     Optional<User> user = userRepository.findByEmail(email);
     if (user.isPresent()) {
-      return AuthResponse.builder().status(HttpStatus.CONFLICT.value()).message(USER_ALREADY_EXISTS).build();
+      return RegisterResponse.builder().status(HttpStatus.CONFLICT.value()).message(USER_ALREADY_EXISTS).build();
     }
 
     String encodedPassword = passwordEncoder.encode(password);
     userRepository.save(new User(email, encodedPassword));
 
-    return AuthResponse.builder().status(HttpStatus.OK.value()).message(USER_REGISTERED).build();
+    return RegisterResponse.builder().status(HttpStatus.OK.value()).message(USER_REGISTERED).build();
   }
 
   public String login(final LoginRequest loginRequest) {
