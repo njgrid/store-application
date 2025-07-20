@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AuthResponse {
+public class RegisterResponse {
 
   private int    status;
   private String message;
