@@ -1,12 +1,13 @@
-#  API Endpoints – Store Application
+# API Endpoints – Store Application
 
-This document lists all the available REST API endpoints for the Store Application, grouped by functionality.
+This document lists all the REST API endpoints for the Store Application.
 
 ---
 
-## ✅ User Authentication
+## User Authentication
 
 ### 1. Register a new user
+
 **POST** `/api/register`
 
 **Request Body**:
@@ -24,6 +25,7 @@ This document lists all the available REST API endpoints for the Store Applicati
 ---
 
 ### 2. Login
+
 **POST** `/api/login`
 
 **Request Body**:
@@ -41,12 +43,14 @@ This document lists all the available REST API endpoints for the Store Applicati
 }
 ```
 
+**Responses**:
 - `200 OK` – Login successful
 - `401 Unauthorized` – Invalid credentials
 
 ---
 
-### 3. (Optional) Reset Password
+### 3. Reset Password
+
 **POST** `/api/reset-password`
 
 **Request Body**:
@@ -56,53 +60,65 @@ This document lists all the available REST API endpoints for the Store Applicati
 }
 ```
 
-- Sends reset instructions (token-based) to email
+**Response**:
+- Sends reset instructions to the email (token-based reset flow)
 
 ---
 
-## ✅ Product APIs
+## Product APIs
 
 ### 4. Get All Products
+
 **GET** `/api/products`
 
 **Response**:
 ```json
 [
   {
-    "id": "2411",
-    "title": "Nail gun",
-    "available": 8,
-    "price": "23.95"
+    "productId": "19",
+    "title": "Screwdriver Set",
+    "available": 12,
+    "price": 15.99
+  },
+  {
+    "productId": "21",
+    "title": "Chair",
+    "available": 12,
+    "price": 23.75
   }
 ]
 ```
 
+**Responses**:
 - `200 OK` – Returns full product list
 
 ---
 
-## ✅ Cart APIs
+## Cart APIs
 
-> These APIs require a valid session or JWT for authentication
+> Requires session ID for all actions below
 
 ### 5. Add Item to Cart
+
 **POST** `/api/cart/add`
 
 **Request Body**:
 ```json
 {
-  "id": "2411",
+  "id": "19",
   "quantity": 2
 }
 ```
 
 **Responses**:
 - `200 OK` – Item added to cart
-- `400 Bad Request` – Insufficient stock
+- `400 Bad Request` – Quantity invalid or exceeds stock
+- `409 Conflict` – Item already in cart
 
 ---
 
 ### 6. View Cart
+
 **GET** `/api/cart`
 
 **Response**:
@@ -110,53 +126,67 @@ This document lists all the available REST API endpoints for the Store Applicati
 {
   "items": [
     {
-      "ordinal": 1,
-      "product": "Nail gun",
+      "ordinal": 0,
+      "title": "Screwdriver Set",
       "quantity": 2,
-      "subtotal": 47.90
+      "subtotal": 31.98
     }
   ],
-  "total": 47.90
+  "totalSubtotal": 31.98
 }
 ```
+
+**Responses**:
+- `200 OK` – Returns cart contents
+- `404 Not Found` – No cart found for session
 
 ---
 
 ### 7. Modify Cart Item
+
 **PUT** `/api/cart/update`
 
 **Request Body**:
 ```json
 {
-  "id": "2411",
+  "id": "19",
   "quantity": 3
 }
 ```
 
-- Updates item quantity
-- If quantity = 0, consider it a remove
+**Behavior**:
+- The quantity should be greater than 0.
+- If quantity exceeds stock, returns error
+
+**Responses**:
+- `200 OK` – Cart item updated or removed
+- `400 Bad Request` – Invalid quantity or stock unavailable
+- `404 Not Found` – Item not found in cart
 
 ---
 
 ### 8. Remove Item from Cart
+
 **DELETE** `/api/cart/remove/{productId}`
 
 **Path Param**:
-- `productId` – ID of the product to remove
+- `productId`: ID of the product to remove
 
-**Response**:
+**Responses**:
 - `200 OK` – Item removed
-- `404 Not Found` – Not found in cart
+- `404 Not Found` – Item not found in cart
 
 ---
 
-## ✅ Order APIs
+## Order APIs
 
 ### 9. Checkout
+
 **POST** `/api/checkout`
 
-- Validates stock and cart prices
-- If successful, creates an order
+**Behavior**:
+- Validates cart: checks price consistency and stock availability
+- If all is good, finalizes the order
 
 **Response**:
 ```json
@@ -166,23 +196,29 @@ This document lists all the available REST API endpoints for the Store Applicati
 }
 ```
 
+**Responses**:
+- `200 OK` – Checkout successful
+- `400 Bad Request` – Price mismatch or insufficient stock
+- `404 Not Found` – Cart not found
+
 ---
 
-### 10. (Optional) Cancel Order
+### 10. Cancel Order
+
 **POST** `/api/orders/{id}/cancel`
 
 **Path Param**:
-- `id` – Order ID to cancel
+- `id`: Order ID to cancel
 
-- Returns items back to stock
-
-**Response**:
-- `200 OK` – Order cancelled
-- `403 Forbidden` – Cannot cancel
+**Responses**:
+- `200 OK` – Order cancelled successfully
+- `403 Forbidden` – Cannot cancel order (already processed)
+- `404 Not Found` – Order not found
 
 ---
 
-### 11. (Optional) Get All Orders for User
+### 11. Get All Orders for User
+
 **GET** `/api/orders`
 
 **Response**:
@@ -197,26 +233,27 @@ This document lists all the available REST API endpoints for the Store Applicati
 ]
 ```
 
+**Responses**:
+- `200 OK` – Order history returned
+- `401 Unauthorized` – Invalid or missing session
+
 ---
 
-## ✅ Authorization
+## Authorization Header
 
-- Most APIs (except `/register`, `/login`, `/products`) require a valid `sessionId` or JWT.
-- Can be passed via headers like:
+Most protected APIs require a session header:
 ```
 Authorization: Bearer <sessionId>
 ```
 
 ---
 
-##  ✅ Notes
+## Notes
 
-- All responses are in JSON.
-- For any invalid input or internal errors, API returns:
+- All requests/responses use `application/json`
+- Standard error format:
 ```json
 {
-  "error": "Some error message"
+  "error": "Error message here"
 }
 ```
-
----
