@@ -237,14 +237,7 @@ This document lists all the REST API endpoints for the Store Application.
 - `200 OK` – Order history returned
 - `401 Unauthorized` – Invalid or missing session
 
----
 
-## Authorization Header
-
-Most protected APIs require a session header:
-```
-Authorization: Bearer <sessionId>
-```
 
 ---
 
