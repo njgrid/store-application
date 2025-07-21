@@ -31,9 +31,41 @@ This is a simple RESTful API for a store system that I built as a backend projec
 
 ---
 
+## Environment Setup 🧪
+
+- Java 17+
+- Docker (for PostgreSQL container)
+- Postgres running locally on `localhost:5432`
+- `application.yml` with DB credentials
+
+Example `application.yml`:
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store_db
+    username: your_db_user
+    password: your_db_password
+```
+
+
 ## Running the Project 🚀
 
 1. Clone this repo:
 ```bash
 git clone https://github.com/your-username/store-app.git
 cd store-app
+```
+2. Start PostgreSQL using Docker
+```bash
+docker run --name store-db \
+  -e POSTGRES_USER=your_db_user \
+  -e POSTGRES_PASSWORD=your_db_password \
+  -e POSTGRES_DB=store_db \
+  -p 5432:5432 -d postgres
+```
+
+3. Run the Application
+ ```bash
+./gradlew bootRun
+```
+---
