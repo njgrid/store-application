@@ -64,4 +64,13 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(PriceChangedException.class)
+  public ResponseEntity<ErrorResponse> handlePriceChangedException(final PriceChangedException priceChangedException,
+      final HttpServletRequest request) {
+    ErrorResponse error = new ErrorResponse(HttpStatus.CONFLICT.value(), priceChangedException.getMessage(),
+        request.getRequestURI());
+
+    return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+  }
+
 }
