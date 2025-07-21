@@ -7,7 +7,7 @@ import com.griddynamics.storeapplication.dto.response.RegisterResponse;
 import com.griddynamics.storeapplication.exception.UserNotFoundException;
 import com.griddynamics.storeapplication.service.AuthService;
 import com.griddynamics.storeapplication.util.CommonUtils;
-import io.micrometer.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
