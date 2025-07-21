@@ -117,9 +117,17 @@ public class CartService {
 
   public void modifyItemQuantity(final ModifyCartItemRequest modifyCartItemRequest) {
     List<CartItem> cartItems = carts.get(modifyCartItemRequest.getSessionId());
-
     if (CollectionUtils.isEmpty(cartItems)) {
       throw new CartNotFoundException(CART_NOT_FOUND);
+    }
+
+    Product product = Optional
+        .ofNullable(productService.getProductById(modifyCartItemRequest.getProductId()))
+        .map(this::toProduct)
+        .orElseThrow(() -> new ProductDoesNotExistException(PRODUCT_DOES_NOT_EXIST));
+
+    if (product.getAvailable() < modifyCartItemRequest.getQuantity()) {
+      throw new InsufficientStockException(INSUFFICIENT_QUANTITY);
     }
 
     synchronized (cartItems) {
