@@ -31,7 +31,7 @@ public class CartService {
 
   private static final String PRODUCT_DOES_NOT_EXIST   = "product with the given id does not exist";
   private static final String ITEM_ALREADY_IN_CART     = "Item already in cart. Modify instead.";
-  private static final String INSUFFICIENT_QUANTITY    = "Insufficient quantity in store";
+  private static final String INSUFFICIENT_QUANTITY    = "Insufficient quantity in store for the given product";
   private static final String ITEM_NOT_PRESENT_IN_CART = "Item with the given product id is not present in cart";
   private static final String CART_NOT_FOUND           = "Cart not found for given session";
 
@@ -86,6 +86,8 @@ public class CartService {
             .ordinal(ordinalCount++)
             .quantity(cartItem.getQuantity())
             .title(cartItem.getProduct().getTitle())
+            .productId(cartItem.getProduct().getProductId())
+            .price(cartItem.getProduct().getPrice())
             .subtotal(cartItemTotalSubTotal)
             .build();
 
@@ -141,6 +143,18 @@ public class CartService {
       } else {
         throw new ItemNotPresentInCartException(ITEM_NOT_PRESENT_IN_CART);
       }
+    }
+  }
+
+  public void clearCart(final String sessionId) {
+    List<CartItem> cartItems = carts.get(sessionId);
+
+    if (CollectionUtils.isEmpty(cartItems)) {
+      throw new CartNotFoundException(CART_NOT_FOUND);
+    }
+
+    synchronized (cartItems) {
+      cartItems.clear();
     }
   }
 
